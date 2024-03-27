@@ -1,4 +1,5 @@
 FROM golang:1.22-alpine as builder
+RUN apk add --no-cache make git
 
 WORKDIR /go/src/github.com/winglot/prometheus-ecs-sd
 
@@ -8,13 +9,13 @@ COPY go.sum .
 RUN go mod download
 
 COPY . .
-RUN go build -a -installsuffix cgo -o /prometheus-ecs-sd ./cmd/sd/main.go
+RUN make build
 
 FROM alpine:3.19
-RUN apk add -U ca-certificates
+RUN apk add --no-cache ca-certificates
 
-COPY --from=builder /prometheus-ecs-sd /prometheus-ecs-sd
-RUN chmod 777 /prometheus-ecs-sd && chown nobody:nobody /prometheus-ecs-sd
+COPY --from=builder /go/src/github.com/winglot/prometheus-ecs-sd/bin/prometheus-ecs-sd /bin/prometheus-ecs-sd
+RUN chmod 777 /bin/prometheus-ecs-sd && chown nobody:nobody /bin/prometheus-ecs-sd
 
 USER nobody
-ENTRYPOINT ["/prometheus-ecs-sd"]
+ENTRYPOINT ["/bin/prometheus-ecs-sd"]
