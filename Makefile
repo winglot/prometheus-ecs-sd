@@ -1,7 +1,7 @@
 SHELL := /bin/sh
 IMAGE=winglot/prometheus-ecs-sd
 REPO=$(IMAGE)
-VERSION=v1.0.0
+VERSION=v1.1.0
 .DEFAULT_GOAL := help
 
 # Colors
